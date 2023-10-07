@@ -16,3 +16,7 @@ linter:
     use_super_parameters: true
     unnecessary_lambdas: true
     unnecessary_parenthesis: true
+
+analyzer:
+  errors:
+    invalid_annotation_target: ignore
