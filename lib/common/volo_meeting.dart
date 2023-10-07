@@ -17,5 +17,5 @@ class VoloMeeting {
   }
 
   static void printLog(dynamic log) =>
-      devtools.log(log, time: DateTime.now(), name: 'VisionMeet');
+      devtools.log(log, time: DateTime.now(), name: appName);
 }
