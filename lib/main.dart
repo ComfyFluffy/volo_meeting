@@ -12,6 +12,7 @@ class VoloMeetingApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(centerTitle: true),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -19,8 +20,9 @@ class VoloMeetingApp extends StatelessWidget {
           seedColor: Colors.deepPurple,
         ),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(centerTitle: true),
       ),
-      home: const Scaffold(),
+      home: const HomePage(),
     );
   }
 }
