@@ -1,8 +1,6 @@
 import 'package:volo_meeting/index.dart';
 
-void main() {
-  runApp(const VoloMeetingApp());
-}
+void main() => VoloMeeting.run();
 
 class VoloMeetingApp extends StatelessWidget {
   const VoloMeetingApp({super.key});
