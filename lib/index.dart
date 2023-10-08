@@ -3,6 +3,7 @@ export 'common/index.dart';
 export 'models/index.dart';
 export 'pages/index.dart';
 export 'riverpod/index.dart';
+export 'widgets/index.dart';
 
 export 'dart:convert';
 export 'dart:io' hide Platform;
