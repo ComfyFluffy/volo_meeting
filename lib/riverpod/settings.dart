@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'settings.g.dart';
 
 @riverpod
-class SettingsStateNotifier extends _$SettingsStateNotifier {
+class Settings extends _$Settings {
   late Persistence _persistence;
 
   @override
@@ -18,5 +18,11 @@ class SettingsStateNotifier extends _$SettingsStateNotifier {
   Future<void> setUsername(String username) async {
     await _persistence.setUsername(username);
     state = state.copyWith(username: username);
+  }
+
+  Future<void> randomDeviceId() async {
+    final deviceId = nanoid();
+    await _persistence.setDeviceId(deviceId);
+    state = state.copyWith(deviceId: deviceId);
   }
 }

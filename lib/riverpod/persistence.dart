@@ -31,11 +31,11 @@ class Persistence {
     return Persistence._(pref);
   }
 
-  String? getUsername() => _pref.getString(_username);
+  String getUsername() => _pref.getString(_username) ?? '';
   Future<void> setUsername(String username) async =>
       await _pref.setString(_username, username);
 
-  String? getDeviceId() {
+  String getDeviceId() {
     final id = _pref.getString(_deviceId) ?? nanoid();
     setDeviceId(id);
     return id;
