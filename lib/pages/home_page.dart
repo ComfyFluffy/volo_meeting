@@ -1,20 +1,27 @@
 import 'package:volo_meeting/index.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsStateNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leading: const HomeAvatar(),
+        title: Text(settings.username ?? ''),
       ),
       drawer: const Drawer(),
-      body: const BasedListSection(
+      body: BasedListSection(
         children: [
-          TextField(),
+          TextButton(
+            onPressed: () {
+              ref.read(settingsStateNotifierProvider.notifier).setUsername('');
+            },
+            child: Text('清空'),
+          )
         ],
       ),
     );
@@ -65,7 +72,7 @@ class SettingsPage extends StatelessWidget {
               ),
               BasedListTile(
                 leadingIcon: Icons.devices_rounded,
-                titleText: 'UUID',
+                titleText: '设备ID',
                 detailText: '$hashCode',
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: '$hashCode'));
