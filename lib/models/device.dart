@@ -1,6 +1,4 @@
 import 'package:volo_meeting/index.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 part 'device.freezed.dart';
 part 'device.g.dart';
 
