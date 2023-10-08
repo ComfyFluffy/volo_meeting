@@ -22,7 +22,7 @@ class VoloMeeting {
   }
 
   static Future<void> androidInit() async {
-    if (!Platform.isAndroid) return;
+    if (!UniversalPlatform.isAndroid) return;
     await FlutterDisplayMode.setHighRefreshRate();
   }
 

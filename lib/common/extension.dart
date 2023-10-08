@@ -1,7 +1,8 @@
 import 'package:volo_meeting/index.dart';
 
-extension PlatformExtension on Platform {
-  static final isMobile = Platform.isAndroid || Platform.isIOS;
+extension PlatformExtension on UniversalPlatform {
+  static final isMobile =
+      UniversalPlatform.isAndroid || UniversalPlatform.isIOS;
 }
 
 extension BuildContextExtension on BuildContext {

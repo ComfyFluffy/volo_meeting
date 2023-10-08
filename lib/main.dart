@@ -77,7 +77,7 @@ class _UsernamePageState extends ConsumerState<UsernamePage> {
               }
             },
             child: Text(''),
-          )
+          ),
         ],
       ),
     );
