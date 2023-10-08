@@ -9,11 +9,21 @@ class VoloMeeting {
   static void run() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    if (Platform.isAndroid) {
-      await FlutterDisplayMode.setHighRefreshRate();
-    }
+    await androidInit();
 
-    runApp(const VoloMeetingApp());
+    runApp(
+      ProviderScope(
+        overrides: [
+          persistenceProvider.overrideWithValue(await Persistence.init()),
+        ],
+        child: const VoloMeetingApp(),
+      ),
+    );
+  }
+
+  static Future<void> androidInit() async {
+    if (!Platform.isAndroid) return;
+    await FlutterDisplayMode.setHighRefreshRate();
   }
 
   static void printLog(dynamic log) =>
