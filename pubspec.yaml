@@ -17,14 +17,14 @@ dependencies:
   based_list: ^1.1.1
   cupertino_icons: ^1.0.6
   dartx: ^1.2.0
-  flutter_displaymode: ^0.6.0
+  flutter_displaymode: ^0.6.0 # TIPS: Only for Android
   flutter_riverpod: ^2.4.3
   flutter_svg: ^2.0.7
   font_awesome_flutter: ^10.5.0
   freezed_annotation: ^2.4.1
   image_picker: ^1.0.4
   json_annotation: ^4.8.1
-  mobile_scanner: ^3.4.1 # TIPS: Only for Android and iOS
+  mobile_scanner: ^3.4.1 # TIPS: Only for Android and IOS
   nanoid2: ^2.0.1
   riverpod_annotation: ^2.2.0
   shared_preferences: ^2.2.1
