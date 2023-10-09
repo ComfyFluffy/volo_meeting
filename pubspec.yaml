@@ -14,7 +14,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   based_avatar: ^1.0.3
-  based_list: ^1.1.1
+  based_list: ^1.1.2
   cupertino_icons: ^1.0.6
   dartx: ^1.2.0
   flutter_displaymode: ^0.6.0 # TIPS: Only for Android

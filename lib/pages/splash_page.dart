@@ -14,14 +14,15 @@ class SplashPage extends ConsumerWidget {
     );
 
     return BasedSplashPage(
-      rootPage: settings.username.isBlank ? const UserPage() : const HomePage(),
-      appIcon: context.brightness == Brightness.dark
-          ? SvgPicture.asset(
-              'assets/images/fill_icon.svg',
-              width: 144,
-              colorFilter: colorFilter,
-            )
-          : SvgPicture.asset('assets/images/outline_icon.svg'),
+      rootPage:
+          settings.username.isBlank ? const LoginPage() : const RootPage(),
+      appIcon: SvgPicture.asset(
+        context.brightness == Brightness.dark
+            ? 'assets/images/fill_icon.svg'
+            : 'assets/images/outline_icon.svg',
+        width: 144,
+        colorFilter: colorFilter,
+      ),
       appName: SvgPicture.asset(
         'assets/images/logo.svg',
         width: 288,

@@ -1,8 +1,10 @@
 {
   "cSpell.words": [
+    "autofocus",
     "dartx",
     "displaymode",
     "riverpod",
+    "videocam",
     "volo"
   ],
   "files.exclude": {
@@ -21,7 +23,8 @@
     ".flutter-plugins-dependencies": true,
     "build": true,
     ".idea": true,
-    ".dart_tool": true
+    ".dart_tool": true,
+    "splitMap": true
   },
   "explorerExclude.backup": {},
   "java.configuration.updateBuildConfiguration": "interactive"

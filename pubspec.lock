@@ -53,10 +53,10 @@ packages:
     dependency: "direct main"
     description:
       name: based_list
-      sha256: "84a22ecedab60203d0af92718fc3d0ac6e856ac68908a30ee44058e7c2a06ad7"
+      sha256: d332995397468e596ffc5ab92ebd31cd9895e76876c886301d12355bad5a6811
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   boolean_selector:
     dependency: transitive
     description:

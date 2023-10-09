@@ -1,15 +1,15 @@
 import 'package:volo_meeting/index.dart';
 
-class UserPage extends ConsumerStatefulWidget {
-  const UserPage({
+class LoginPage extends ConsumerStatefulWidget {
+  const LoginPage({
     super.key,
   });
 
   @override
-  ConsumerState<UserPage> createState() => _UsernamePageState();
+  ConsumerState<LoginPage> createState() => _UsernamePageState();
 }
 
-class _UsernamePageState extends ConsumerState<UserPage> {
+class _UsernamePageState extends ConsumerState<LoginPage> {
   late final _controller = TextEditingController(
     text: ref.watch(settingsProvider).username,
   );
@@ -38,7 +38,7 @@ class _UsernamePageState extends ConsumerState<UserPage> {
                 ref
                     .read(settingsProvider.notifier)
                     .setUsername(_controller.text);
-                context.pushAndRemoveRoot(const HomePage());
+                context.pushAndRemoveRoot(const RootPage());
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('用户名不能为空')),
