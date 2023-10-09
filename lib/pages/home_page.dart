@@ -46,7 +46,6 @@ class _HomePageBodyState extends State<HomePageBody> {
                 itemPadding: const EdgeInsets.all(16),
                 children: [
                   TextField(
-                    autofocus: true,
                     controller: _controller,
                     decoration: const InputDecoration(
                       hintText: '请输入会议号',
