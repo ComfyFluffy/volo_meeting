@@ -17,45 +17,48 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('登录'),
-      ),
-      body: Center(
-        child: Container(
-          constraints: const BoxConstraints(
-            maxWidth: 400,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    labelText: '用户名',
-                    border: OutlineInputBorder(),
-                  ),
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: SizedBox(
+                width: 360,
+                child: BasedListSection(
+                  titleText: '登录',
+                  mainAxisSize: MainAxisSize.min,
+                  itemPadding: const EdgeInsets.all(16),
+                  children: [
+                    TextField(
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        hintText: '请输入用户名',
+                        border: OutlineInputBorder(),
+                        labelText: '用户名',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 32),
-                FilledButton(
-                  onPressed: () {
-                    if (_controller.text.isNotBlank) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setUsername(_controller.text);
-                      context.pushAndRemoveRoot(const RootPage());
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('用户名不能为空')),
-                      );
-                    }
-                  },
-                  child: const Text('登录'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 48),
+            child: FilledButton(
+              onPressed: () {
+                if (_controller.text.isNotBlank) {
+                  context.push(const RootPage());
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('用户名不能为空')),
+                  );
+                }
+              },
+              child: const Text('登录'),
+            ),
+          ),
+        ],
       ),
     );
   }
