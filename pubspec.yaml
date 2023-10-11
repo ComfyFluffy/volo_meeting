@@ -20,6 +20,7 @@ dependencies:
   flutter_displaymode: ^0.6.0 # TIPS: Only for Android
   flutter_riverpod: ^2.4.3
   flutter_svg: ^2.0.7
+  flutter_webrtc: ^0.9.45
   font_awesome_flutter: ^10.5.0
   freezed_annotation: ^2.4.1
   image_picker: ^1.0.4

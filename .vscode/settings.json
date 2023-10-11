@@ -5,7 +5,8 @@
     "displaymode",
     "riverpod",
     "videocam",
-    "volo"
+    "volo",
+    "webrtc"
   ],
   "files.exclude": {
     "**/.git": true,
