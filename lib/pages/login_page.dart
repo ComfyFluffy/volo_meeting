@@ -48,7 +48,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             child: FilledButton(
               onPressed: () {
                 if (_controller.text.isNotBlank) {
-                  context.push(const RootPage());
+                  context.pushAndRemoveRoot(const RootPage());
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('用户名不能为空')),
