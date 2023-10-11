@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:volo_meeting/index.dart';
 
 class HomePage extends ConsumerWidget {
@@ -64,7 +66,7 @@ class _HomePageBodyState extends State<HomePageBody> {
           child: FilledButton(
             onPressed: () {
               if (_controller.text.isInt) {
-                context.push(const MeetPage());
+                context.push(const JoinMeetPage());
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('请检查会议号')),
@@ -75,6 +77,88 @@ class _HomePageBodyState extends State<HomePageBody> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class JoinMeetPage extends StatefulWidget {
+  const JoinMeetPage({
+    super.key,
+  });
+
+  @override
+  State<JoinMeetPage> createState() => _JoinMeetPageState();
+}
+
+class _JoinMeetPageState extends State<JoinMeetPage> {
+  final _localRenderer = RTCVideoRenderer();
+  late MediaStream _localStream;
+  late List<MediaDeviceInfo> _mediaDevicesList;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  void init() async {
+    _localRenderer.initialize();
+
+    navigator.mediaDevices.ondevicechange = (event) async {
+      _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
+    };
+
+    final mediaConstraints = <String, dynamic>{
+      'audio': true,
+      'video': {},
+    };
+
+    try {
+      final stream = await navigator.mediaDevices.getUserMedia(
+        mediaConstraints,
+      );
+
+      _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
+      _localStream = stream;
+      _localRenderer.srcObject = _localStream;
+    } catch (e) {
+      VoloMeeting.printLog(e);
+    }
+  }
+
+  @override
+  void dispose() {
+    close();
+    navigator.mediaDevices.ondevicechange = null;
+    super.dispose();
+  }
+
+  void close() async {
+    try {
+      if (kIsWeb) {
+        _localStream.getTracks().forEach((track) => track.stop());
+      }
+      await _localStream.dispose();
+      _localRenderer.srcObject = null;
+    } catch (e) {
+      VoloMeeting.printLog(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: BasedListView(
+        children: [
+          BasedListSection(
+            children: [
+              RTCVideoView(_localRenderer),
+              VideoEnableTile(value: true, onChanged: (value) {}),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -123,6 +207,41 @@ class HomePageDrawer extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class RTCVideoView extends StatelessWidget {
+  const RTCVideoView(
+    this._renderer, {
+    super.key,
+    this.filterQuality = FilterQuality.low,
+    this.placeholderBuilder,
+  });
+
+  final RTCVideoRenderer _renderer;
+  final FilterQuality filterQuality;
+  final WidgetBuilder? placeholderBuilder;
+
+  RTCVideoRenderer get videoRenderer => _renderer;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: videoRenderer,
+      builder: (context, value, child) {
+        /// FIXME: find a way to limit the width and height
+        return AspectRatio(
+          aspectRatio: value.aspectRatio,
+          child: videoRenderer.renderVideo
+              ? Texture(
+                  textureId: videoRenderer.textureId!,
+                  filterQuality: filterQuality,
+                )
+              : placeholderBuilder?.call(context) ??
+                  const Center(child: CircularProgressIndicator()),
+        );
+      },
     );
   }
 }
