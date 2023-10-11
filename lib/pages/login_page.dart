@@ -48,6 +48,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             child: FilledButton(
               onPressed: () {
                 if (_controller.text.isNotBlank) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setUsername(_controller.text);
                   context.pushAndRemoveRoot(const RootPage());
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
