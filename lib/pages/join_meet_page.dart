@@ -10,124 +10,55 @@ class JoinMeetPage extends StatefulWidget {
 }
 
 class _JoinMeetPageState extends State<JoinMeetPage> {
-  bool _using = false;
-  final _localRenderer = RTCVideoRenderer();
-
-  late MediaStream _localStream;
-  late List<MediaDeviceInfo> _mediaDevicesList;
-
-  @override
-  void initState() {
-    super.initState();
-
-    /// init render
-    _localRenderer.initialize();
-
-    /// setup listener
-    navigator.mediaDevices.ondevicechange = (event) async {
-      _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
-    };
-
-    start();
-  }
-
-  @override
-  void dispose() {
-    ///
-    if (_using) _localStream.dispose();
-
-    /// cleanup listener
-    navigator.mediaDevices.ondevicechange = null;
-
-    /// dispose render
-    _localRenderer.dispose();
-
-    super.dispose();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  void start({
-    Map<String, dynamic> mediaConstraints = const {
-      'audio': true,
-      'video': true,
-    },
-  }) async {
-    try {
-      var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
-      _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
-      _localStream = stream;
-      _localRenderer.srcObject = _localStream;
-    } catch (e) {
-      VoloMeeting.printLog(e);
-    }
-    if (mounted) setState(() => _using = true);
-  }
-
-  void close() {
-    _localStream.getTracks().forEach((track) => track.stop());
-    _localRenderer.srcObject = null;
-    _localStream.dispose();
-    if (mounted) setState(() => _using = false);
-  }
-
-  void setZoom(double zoomLevel) async {
-    final videoTrack = _localStream
-        .getVideoTracks()
-        .firstWhere((track) => track.kind == 'video');
-    await WebRTC.invokeMethod(
-      'mediaStreamTrackSetZoom',
-      <String, dynamic>{'trackId': videoTrack.id, 'zoomLevel': zoomLevel},
-    );
-  }
-
-  void _toggleCamera() async {
-    final videoTrack = _localStream
-        .getVideoTracks()
-        .firstWhere((track) => track.kind == 'video');
-    await Helper.switchCamera(videoTrack);
-  }
+  final controller = RTCVideoController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: _using
-            ? [
-                IconButton(
-                  icon: const Icon(Icons.switch_video),
-                  onPressed: _toggleCamera,
-                ),
-                PopupMenuButton<String>(
-                  onSelected: _localRenderer.audioOutput,
-                  itemBuilder: (context) => _mediaDevicesList
-                      .where((device) => device.kind == 'audiooutput')
-                      .map(
-                        (device) => PopupMenuItem<String>(
-                          value: device.deviceId,
-                          child: Text(device.label),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ]
-            : null,
-      ),
-      body: BasedListView(
+      appBar: AppBar(),
+      body: Column(
         children: [
-          BasedListSection(
-            children: [
-              SizedBox(
-                height: 200,
-                child: RTCVideoView(_localRenderer),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.sizeOf(context).width / 2,
+                child: RTCVideoView(controller: controller),
               ),
-            ],
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: BasedListView(
+              children: [
+                BasedListSection(
+                  children: [
+                    VideoEnableTile(
+                      value: controller.mediaConstraints.enableVideo,
+                      onChanged: (value) {
+                        setState(() {
+                          controller.setMediaConstraints(
+                            controller.mediaConstraints.copyWith(video: value),
+                          );
+                        });
+                      },
+                    ),
+                    MicEnableTile(
+                      value: controller.mediaConstraints.enableAudio,
+                      onChanged: (value) {
+                        setState(() {
+                          controller.setMediaConstraints(
+                            controller.mediaConstraints.copyWith(audio: value),
+                          );
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _using ? close : start,
-        tooltip: _using ? 'Hangup' : 'Call',
-        child: Icon(_using ? Icons.call_end : Icons.phone),
       ),
     );
   }
