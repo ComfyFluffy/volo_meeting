@@ -28,6 +28,7 @@ export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:mobile_scanner/mobile_scanner.dart';
 export 'package:nanoid2/nanoid2.dart';
+export 'package:pinput/pinput.dart';
 export 'package:sticky_and_expandable_list/sticky_and_expandable_list.dart';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'package:universal_platform/universal_platform.dart';

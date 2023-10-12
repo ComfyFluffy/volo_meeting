@@ -27,6 +27,7 @@ dependencies:
   json_annotation: ^4.8.1
   mobile_scanner: ^3.4.1 # TIPS: Only for Android and IOS
   nanoid2: ^2.0.1
+  pinput: ^3.0.1
   riverpod_annotation: ^2.2.0
   shared_preferences: ^2.2.1
   sticky_and_expandable_list: ^1.1.3

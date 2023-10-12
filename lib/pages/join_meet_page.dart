@@ -22,7 +22,9 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
     final notifier = ref.watch(settingsProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('会议设置'),
+      ),
       body: Column(
         children: [
           Expanded(
