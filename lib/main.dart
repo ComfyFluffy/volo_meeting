@@ -10,6 +10,7 @@ class VoloMeetingApp extends StatelessWidget {
     return MaterialApp(
       title: VoloMeeting.appName,
       scrollBehavior: const CupertinoScrollBehavior(),
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
