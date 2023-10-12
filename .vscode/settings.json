@@ -3,6 +3,7 @@
     "autofocus",
     "dartx",
     "displaymode",
+    "ondevicechange",
     "riverpod",
     "videocam",
     "volo",

@@ -2,17 +2,15 @@ import 'package:volo_meeting/index.dart';
 
 class RTCVideoView extends StatelessWidget {
   const RTCVideoView(
-    this._renderer, {
+    this.renderer, {
     super.key,
     this.filterQuality = FilterQuality.low,
     this.placeholderBuilder,
   });
 
-  final RTCVideoRenderer _renderer;
+  final RTCVideoRenderer renderer;
   final FilterQuality filterQuality;
   final WidgetBuilder? placeholderBuilder;
-
-  RTCVideoRenderer get videoRenderer => _renderer;
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +18,13 @@ class RTCVideoView extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: ValueListenableBuilder(
-          valueListenable: videoRenderer,
+          valueListenable: renderer,
           builder: (context, value, child) {
-            VoloMeeting.printLog('$videoRenderer $value');
-            return videoRenderer.renderVideo
+            return renderer.renderVideo
                 ? AspectRatio(
                     aspectRatio: value.aspectRatio,
                     child: Texture(
-                      textureId: videoRenderer.textureId!,
+                      textureId: renderer.textureId!,
                       filterQuality: filterQuality,
                     ),
                   )

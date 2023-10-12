@@ -10,50 +10,108 @@ class JoinMeetPage extends StatefulWidget {
 }
 
 class _JoinMeetPageState extends State<JoinMeetPage> {
+  bool _using = false;
   final _localRenderer = RTCVideoRenderer();
+
   late MediaStream _localStream;
   late List<MediaDeviceInfo> _mediaDevicesList;
-
-  final _mediaConstraints = <String, dynamic>{
-    'audio': true,
-    'video': true,
-  };
 
   @override
   void initState() {
     super.initState();
-    init();
-  }
 
-  void init() async {
+    /// init render
     _localRenderer.initialize();
 
+    /// setup listener
     navigator.mediaDevices.ondevicechange = (event) async {
       _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
     };
 
-    try {
-      _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
-      _localStream = await navigator.mediaDevices.getUserMedia(
-        _mediaConstraints,
-      );
-      _localRenderer.srcObject = _localStream;
-    } catch (e) {
-      VoloMeeting.printLog(e);
-    }
+    start();
   }
 
   @override
   void dispose() {
-    _localStream.dispose();
+    ///
+    if (_using) _localStream.dispose();
+
+    /// cleanup listener
+    navigator.mediaDevices.ondevicechange = null;
+
+    /// dispose render
     _localRenderer.dispose();
+
     super.dispose();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  void start({
+    Map<String, dynamic> mediaConstraints = const {
+      'audio': true,
+      'video': true,
+    },
+  }) async {
+    try {
+      var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
+      _localStream = stream;
+      _localRenderer.srcObject = _localStream;
+    } catch (e) {
+      VoloMeeting.printLog(e);
+    }
+    if (mounted) setState(() => _using = true);
+  }
+
+  void close() {
+    _localStream.getTracks().forEach((track) => track.stop());
+    _localRenderer.srcObject = null;
+    _localStream.dispose();
+    if (mounted) setState(() => _using = false);
+  }
+
+  void setZoom(double zoomLevel) async {
+    final videoTrack = _localStream
+        .getVideoTracks()
+        .firstWhere((track) => track.kind == 'video');
+    await WebRTC.invokeMethod(
+      'mediaStreamTrackSetZoom',
+      <String, dynamic>{'trackId': videoTrack.id, 'zoomLevel': zoomLevel},
+    );
+  }
+
+  void _toggleCamera() async {
+    final videoTrack = _localStream
+        .getVideoTracks()
+        .firstWhere((track) => track.kind == 'video');
+    await Helper.switchCamera(videoTrack);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: _using
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.switch_video),
+                  onPressed: _toggleCamera,
+                ),
+                PopupMenuButton<String>(
+                  onSelected: _localRenderer.audioOutput,
+                  itemBuilder: (context) => _mediaDevicesList
+                      .where((device) => device.kind == 'audiooutput')
+                      .map(
+                        (device) => PopupMenuItem<String>(
+                          value: device.deviceId,
+                          child: Text(device.label),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ]
+            : null,
+      ),
       body: BasedListView(
         children: [
           BasedListSection(
@@ -62,25 +120,14 @@ class _JoinMeetPageState extends State<JoinMeetPage> {
                 height: 200,
                 child: RTCVideoView(_localRenderer),
               ),
-              VideoEnableTile(
-                value: _mediaConstraints['video'],
-                onChanged: (value) async {
-                  _mediaConstraints['video'] = value;
-                  _localStream = await navigator.mediaDevices.getUserMedia(
-                    {
-                      'audio': true,
-                      'video': false,
-                    },
-                  );
-                  _localRenderer.srcObject = _localStream;
-                  print(_mediaConstraints);
-                  init();
-                  setState(() {});
-                },
-              ),
             ],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _using ? close : start,
+        tooltip: _using ? 'Hangup' : 'Call',
+        child: Icon(_using ? Icons.call_end : Icons.phone),
       ),
     );
   }
