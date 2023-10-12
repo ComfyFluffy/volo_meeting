@@ -7,6 +7,8 @@ class SettingsState with _$SettingsState {
   const factory SettingsState({
     @JsonKey(name: 'username') required String username,
     @JsonKey(name: 'device_id') required String deviceId,
+    @JsonKey(name: 'enable_video') required bool enableVideo,
+    @JsonKey(name: 'enable_audio') required bool enableAudio,
   }) = _Settings;
 
   const SettingsState._();

@@ -1,18 +1,21 @@
 import 'package:volo_meeting/index.dart';
 
-class AudioSettingSection extends StatelessWidget {
+class AudioSettingSection extends ConsumerWidget {
   const AudioSettingSection({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.watch(settingsProvider.notifier);
+
     return BasedListSection(
       titleText: '音频',
       children: [
-        MicEnableTile(
-          value: true,
-          onChanged: (value) {},
+        AudioEnableTile(
+          value: settings.enableAudio,
+          onChanged: notifier.setEnableAudio,
         ),
         SpeakerEnableTile(
           value: true,

@@ -1,18 +1,21 @@
 import 'package:volo_meeting/index.dart';
 
-class VideoSettingSection extends StatelessWidget {
+class VideoSettingSection extends ConsumerWidget {
   const VideoSettingSection({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.watch(settingsProvider.notifier);
+
     return BasedListSection(
       titleText: '视频',
       children: [
         VideoEnableTile(
-          value: true,
-          onChanged: (value) {},
+          value: settings.enableVideo,
+          onChanged: notifier.setEnableVideo,
         ),
         const VirtualBackgroundTile(),
         BasedSwitchListTile(

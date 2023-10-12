@@ -1,19 +1,26 @@
 import 'package:volo_meeting/index.dart';
 
-class JoinMeetPage extends StatefulWidget {
+class JoinMeetPage extends ConsumerStatefulWidget {
   const JoinMeetPage({
     super.key,
   });
 
   @override
-  State<JoinMeetPage> createState() => _JoinMeetPageState();
+  ConsumerState<JoinMeetPage> createState() => _JoinMeetPageState();
 }
 
-class _JoinMeetPageState extends State<JoinMeetPage> {
-  final _controller = RTCVideoController();
+class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
+  late final RTCVideoController _controller = RTCVideoController(
+    mediaConstraints: MediaConstraints(
+      audio: ref.watch(settingsProvider).enableAudio,
+      video: ref.watch(settingsProvider).enableVideo,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
+    final notifier = ref.watch(settingsProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(),
       body: Column(
@@ -36,6 +43,7 @@ class _JoinMeetPageState extends State<JoinMeetPage> {
                     VideoEnableTile(
                       value: _controller.mediaConstraints.enableVideo,
                       onChanged: (value) {
+                        notifier.setEnableVideo(value);
                         setState(() {
                           _controller.setMediaConstraints(
                             _controller.mediaConstraints.copyWith(video: value),
@@ -43,9 +51,10 @@ class _JoinMeetPageState extends State<JoinMeetPage> {
                         });
                       },
                     ),
-                    MicEnableTile(
+                    AudioEnableTile(
                       value: _controller.mediaConstraints.enableAudio,
                       onChanged: (value) {
+                        notifier.setEnableAudio(value);
                         setState(() {
                           _controller.setMediaConstraints(
                             _controller.mediaConstraints.copyWith(audio: value),

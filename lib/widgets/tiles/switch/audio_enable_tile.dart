@@ -1,7 +1,7 @@
 import 'package:volo_meeting/index.dart';
 
-class MicEnableTile extends StatelessWidget {
-  const MicEnableTile({
+class AudioEnableTile extends ConsumerWidget {
+  const AudioEnableTile({
     super.key,
     required this.value,
     required this.onChanged,
@@ -11,7 +11,7 @@ class MicEnableTile extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return BasedSwitchListTile(
       value: value,
       onChanged: onChanged,

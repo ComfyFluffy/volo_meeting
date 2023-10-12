@@ -12,6 +12,8 @@ class Settings extends _$Settings {
     return SettingsState(
       username: _persistence.getUsername(),
       deviceId: _persistence.getDeviceId(),
+      enableAudio: _persistence.getEnableAudio(),
+      enableVideo: _persistence.getEnableVideo(),
     );
   }
 
@@ -24,5 +26,15 @@ class Settings extends _$Settings {
     final deviceId = nanoid();
     await _persistence.setDeviceId(deviceId);
     state = state.copyWith(deviceId: deviceId);
+  }
+
+  Future<void> setEnableVideo(bool value) async {
+    await _persistence.setEnableVideo(value);
+    state = state.copyWith(enableVideo: value);
+  }
+
+  Future<void> setEnableAudio(bool value) async {
+    await _persistence.setEnableAudio(value);
+    state = state.copyWith(enableAudio: value);
   }
 }

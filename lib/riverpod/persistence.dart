@@ -5,6 +5,8 @@ part 'persistence.g.dart';
 const _version = 'vm_version';
 const _username = 'vm_username';
 const _deviceId = 'vm_device_id';
+const _enableVideo = 'vm_enable_video';
+const _enableAudio = 'vm_enable_audio';
 
 @riverpod
 Persistence persistence(PersistenceRef ref) =>
@@ -43,4 +45,12 @@ class Persistence {
 
   Future<void> setDeviceId(String deviceId) async =>
       await _pref.setString(_deviceId, deviceId);
+
+  bool getEnableVideo() => _pref.getBool(_enableVideo) ?? true;
+  Future<void> setEnableAudio(bool value) async =>
+      await _pref.setBool(_enableAudio, value);
+
+  bool getEnableAudio() => _pref.getBool(_enableAudio) ?? true;
+  Future<void> setEnableVideo(bool value) async =>
+      await _pref.setBool(_enableVideo, value);
 }
