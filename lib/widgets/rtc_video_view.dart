@@ -1,41 +1,131 @@
 import 'package:volo_meeting/index.dart';
 
-class RTCVideoView extends StatelessWidget {
+class RTCVideoView extends StatefulWidget {
   const RTCVideoView({
-    required this.controller,
+    required this.localController,
     super.key,
     this.filterQuality = FilterQuality.low,
     this.placeholderBuilder,
   });
 
-  final RTCVideoController controller;
+  final RTCVideoController localController;
   final FilterQuality filterQuality;
   final WidgetBuilder? placeholderBuilder;
 
   @override
+  State<RTCVideoView> createState() => _RTCVideoViewState();
+}
+
+class _RTCVideoViewState extends State<RTCVideoView> {
+  final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+
+  @override
+  void initState() {
+    super.initState();
+    initWebRTC();
+  }
+
+  @override
+  void dispose() {
+    remoteRenderer.dispose();
+    super.dispose();
+  }
+
+  void initWebRTC() async {
+    print('initWebRTC');
+    await widget.localController.start();
+    final configuration = {
+      'iceServers': [
+        {'url': 'stun:stun.l.google.com:19302'},
+      ],
+    };
+    final pc1 = await createPeerConnection(configuration);
+    final pc2 = await createPeerConnection(configuration);
+
+    pc1.onIceCandidate = (candidate) {
+      print('pc1 ice: ${candidate.candidate}');
+      pc2.addCandidate(candidate);
+    };
+    pc2.onIceCandidate = (candidate) {
+      print('pc2 ice: ${candidate.candidate}');
+      pc1.addCandidate(candidate);
+    };
+
+    pc1.onIceConnectionState = (state) {
+      print('pc1 connection: $state');
+    };
+    pc2.onIceConnectionState = (state) {
+      print('pc2 connection: $state');
+    };
+
+    print('addTrack');
+    widget.localController._localStream.getTracks().forEach((track) {
+      print('${track.kind} ${track.id}');
+      pc1.addTrack(track, widget.localController._localStream);
+    });
+
+    final offer = await pc1.createOffer({});
+    await pc1.setLocalDescription(offer);
+    await pc2.setRemoteDescription(offer);
+
+    final answer = await pc2.createAnswer({});
+    await pc2.setLocalDescription(answer);
+    await pc1.setRemoteDescription(answer);
+
+    pc2.onTrack = (event) {
+      print(event.streams[0].getTracks());
+      if (event.track.kind == 'video') {
+        remoteRenderer.srcObject = event.streams[0];
+      }
+    };
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: ValueListenableBuilder(
-          valueListenable: controller.renderer,
-          builder: (context, value, child) {
-            final hasVideo = controller.renderer.renderVideo &&
-                value.width * value.height != 0;
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: ValueListenableBuilder(
+              valueListenable: widget.localController.renderer,
+              builder: (context, value, child) {
+                final hasVideo = widget.localController.renderer.renderVideo &&
+                    value.width * value.height != 0;
 
-            return AspectRatio(
-              aspectRatio: hasVideo
-                  ? value.aspectRatio
-                  : MediaQuery.of(context).size.aspectRatio,
-              child: hasVideo
-                  ? Texture(
-                      textureId: controller.renderer.textureId!,
-                      filterQuality: filterQuality,
-                    )
-                  : const ColoredBox(color: Colors.black),
-            );
-          },
-        ),
+                return AspectRatio(
+                  aspectRatio: hasVideo ? value.aspectRatio : 480 / 640,
+                  child: hasVideo
+                      ? Texture(
+                          textureId: widget.localController.renderer.textureId!,
+                          filterQuality: widget.filterQuality,
+                        )
+                      : const ColoredBox(color: Colors.black),
+                );
+              },
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: ValueListenableBuilder(
+              valueListenable: remoteRenderer,
+              builder: (context, value, child) {
+                final hasVideo =
+                    value.renderVideo && value.width * value.height != 0;
+
+                return AspectRatio(
+                  aspectRatio: hasVideo ? value.aspectRatio : 480 / 640,
+                  child: hasVideo
+                      ? Texture(
+                          textureId: remoteRenderer.textureId!,
+                          filterQuality: widget.filterQuality,
+                        )
+                      : const ColoredBox(color: Colors.black),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -91,7 +181,7 @@ class RTCVideoController extends ChangeNotifier {
     super.dispose();
   }
 
-  void start() async {
+  Future<void> start() async {
     if (_enable) return;
 
     try {

@@ -15,6 +15,7 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
       audio: ref.watch(settingsProvider).enableAudio,
       video: ref.watch(settingsProvider).enableVideo,
     ),
+    autoStart: false,
   );
 
   @override
@@ -29,12 +30,7 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
         children: [
           Expanded(
             flex: 2,
-            child: Center(
-              child: SizedBox(
-                width: MediaQuery.sizeOf(context).width / 2,
-                child: RTCVideoView(controller: _controller),
-              ),
-            ),
+            child: RTCVideoView(localController: _controller),
           ),
           Expanded(
             flex: 3,
