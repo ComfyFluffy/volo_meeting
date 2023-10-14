@@ -8,6 +8,5 @@ export 'root_page.dart';
 export 'schedule_page.dart';
 export 'settings_page.dart';
 export 'splash_page.dart';
-export 'join_meet_page.dart';
 export 'login_page.dart';
 export 'meet_page.dart';

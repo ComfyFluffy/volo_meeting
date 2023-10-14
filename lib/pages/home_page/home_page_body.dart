@@ -1,4 +1,5 @@
 import 'package:volo_meeting/index.dart';
+import 'package:volo_meeting/widgets/loopback_sample_unified_tracks.dart';
 
 class HomePageBody extends StatefulWidget {
   const HomePageBody({
@@ -43,7 +44,7 @@ class _HomePageBodyState extends State<HomePageBody> {
           child: FilledButton(
             onPressed: () {
               if (_controller.text.isInt) {
-                context.push(const JoinMeetPage());
+                context.push(LoopBackSampleUnifiedTracks());
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('请检查会议号')),

@@ -34,11 +34,7 @@ class _RTCVideoViewState extends State<RTCVideoView> {
   void initWebRTC() async {
     print('initWebRTC');
     await widget.localController.start();
-    final configuration = {
-      'iceServers': [
-        {'url': 'stun:stun.l.google.com:19302'},
-      ],
-    };
+    final configuration = {'sdpSemantics': 'unified-plan'};
     final pc1 = await createPeerConnection(configuration);
     final pc2 = await createPeerConnection(configuration);
 
@@ -64,6 +60,18 @@ class _RTCVideoViewState extends State<RTCVideoView> {
       pc1.addTrack(track, widget.localController._localStream);
     });
 
+    await pc2.addTransceiver(
+        kind: RTCRtpMediaType.RTCRtpMediaTypeAudio,
+        init: RTCRtpTransceiverInit(direction: TransceiverDirection.RecvOnly));
+    await pc2.addTransceiver(
+        kind: RTCRtpMediaType.RTCRtpMediaTypeVideo,
+        init: RTCRtpTransceiverInit(direction: TransceiverDirection.RecvOnly));
+
+    pc2.onAddTrack = (stream, track) {
+      print('addTrack: ${stream.id} ${track.kind} ${track.id}');
+      remoteRenderer.srcObject = stream;
+    };
+
     final offer = await pc1.createOffer({});
     await pc1.setLocalDescription(offer);
     await pc2.setRemoteDescription(offer);
@@ -71,13 +79,6 @@ class _RTCVideoViewState extends State<RTCVideoView> {
     final answer = await pc2.createAnswer({});
     await pc2.setLocalDescription(answer);
     await pc1.setRemoteDescription(answer);
-
-    pc2.onTrack = (event) {
-      print(event.streams[0].getTracks());
-      if (event.track.kind == 'video') {
-        remoteRenderer.srcObject = event.streams[0];
-      }
-    };
   }
 
   @override
