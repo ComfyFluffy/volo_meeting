@@ -10,15 +10,20 @@ class JoinMeetPage extends ConsumerStatefulWidget {
 }
 
 class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
-  late final RTCVideoController _controller = RTCVideoController(
-    mediaConstraints: MediaConstraints(
-      audio: ref.watch(settingsProvider).enableAudio,
-      video: ref.watch(settingsProvider).enableVideo,
+  late final RTCPreviewController _controller = RTCPreviewController(
+    mediaConstraints: const MediaConstraints(
+      audio: true,
+      video: {
+        'facingMode': 'user',
+      },
     ),
+    videoEnabled: ref.watch(settingsProvider).enableVideo,
+    audioEnabled: ref.watch(settingsProvider).enableAudio,
   );
 
   @override
   Widget build(BuildContext context) {
+    final settings = ref.watch(settingsProvider);
     final notifier = ref.watch(settingsProvider.notifier);
 
     return Scaffold(
@@ -43,24 +48,20 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
                 BasedListSection(
                   children: [
                     VideoEnableTile(
-                      value: _controller.mediaConstraints.enableVideo,
+                      value: settings.enableVideo,
                       onChanged: (value) {
                         notifier.setEnableVideo(value);
                         setState(() {
-                          _controller.setMediaConstraints(
-                            _controller.mediaConstraints.copyWith(video: value),
-                          );
+                          _controller.setMediaEnabled(video: value);
                         });
                       },
                     ),
                     AudioEnableTile(
-                      value: _controller.mediaConstraints.enableAudio,
+                      value: settings.enableAudio,
                       onChanged: (value) {
                         notifier.setEnableAudio(value);
                         setState(() {
-                          _controller.setMediaConstraints(
-                            _controller.mediaConstraints.copyWith(audio: value),
-                          );
+                          _controller.setMediaEnabled(audio: value);
                         });
                       },
                     ),

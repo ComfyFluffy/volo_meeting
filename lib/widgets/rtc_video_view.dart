@@ -8,7 +8,7 @@ class RTCVideoView extends StatelessWidget {
     this.placeholderBuilder,
   });
 
-  final RTCVideoController controller;
+  final RTCPreviewController controller;
   final FilterQuality filterQuality;
   final WidgetBuilder? placeholderBuilder;
 
@@ -41,7 +41,7 @@ class RTCVideoView extends StatelessWidget {
   }
 }
 
-class RTCVideoController extends ChangeNotifier {
+class RTCPreviewController extends ChangeNotifier {
   final _renderer = RTCVideoRenderer();
   RTCVideoRenderer get renderer => _renderer;
 
@@ -53,17 +53,26 @@ class RTCVideoController extends ChangeNotifier {
 
   late MediaStream _localStream;
 
-  bool _enable = false;
+  bool _started = false;
+
+  bool _videoEnabled = true;
+  bool _audioEnabled = true;
+
+  get videoEnabled => _videoEnabled;
+  get audioEnabled => _audioEnabled;
 
   @override
   String toString() => mediaConstraints.toJson().toString();
 
-  RTCVideoController({
+  RTCPreviewController({
     MediaConstraints? mediaConstraints,
-    bool autoStart = true,
+    videoEnabled = true,
+    audioEnabled = true,
   }) {
     /// set mediaConstraints
     _constraints = mediaConstraints ?? const MediaConstraints();
+    _videoEnabled = videoEnabled;
+    _audioEnabled = audioEnabled;
 
     /// init renderer
     renderer.initialize();
@@ -74,12 +83,13 @@ class RTCVideoController extends ChangeNotifier {
       notifyListeners();
     };
 
-    if (autoStart) start();
+    start();
   }
 
   @override
   void dispose() {
     /// dispose stream
+    _localStream.getTracks().forEach((track) => track.stop());
     _localStream.dispose();
 
     /// cleanup listener
@@ -91,30 +101,30 @@ class RTCVideoController extends ChangeNotifier {
     super.dispose();
   }
 
-  void start() async {
-    if (_enable) return;
+  Future<void> start() async {
+    if (_started) return;
 
-    try {
-      _devicesList = await navigator.mediaDevices.enumerateDevices();
-      _localStream = await navigator.mediaDevices.getUserMedia(
-        _constraints.toJson(),
-      );
-      renderer.srcObject = _localStream;
-    } catch (e) {
-      VoloMeeting.printLog(e);
-    }
-    _enable = true;
+    _devicesList = await navigator.mediaDevices.enumerateDevices();
+    _localStream = await navigator.mediaDevices.getUserMedia(
+      {
+        'audio': _audioEnabled ? _constraints.audio : false,
+        'video': _videoEnabled ? _constraints.video : false,
+      },
+    );
+    renderer.srcObject = _localStream;
+
+    _started = true;
 
     notifyListeners();
   }
 
   void close() {
-    if (!_enable) return;
+    if (!_started) return;
 
     _localStream.getTracks().forEach((track) => track.stop());
     renderer.srcObject = null;
     _localStream.dispose();
-    _enable = false;
+    _started = false;
 
     notifyListeners();
   }
@@ -122,31 +132,39 @@ class RTCVideoController extends ChangeNotifier {
   void setMediaConstraints(
     MediaConstraints mediaConstraints,
   ) {
-    close();
     _constraints = mediaConstraints;
+
+    close();
+    start();
+  }
+
+  void setMediaEnabled({
+    bool? audio,
+    bool? video,
+  }) {
+    _audioEnabled = audio ?? _audioEnabled;
+    _videoEnabled = video ?? _videoEnabled;
+
+    close();
     start();
   }
 }
 
 class MediaConstraints {
   const MediaConstraints({
-    this.audio = true,
-    this.video = true,
+    this.audio,
+    this.video,
   });
 
   final dynamic audio;
   final dynamic video;
 
-  bool get enableAudio => audio is bool ? audio : false;
-
-  bool get enableVideo => video is bool ? video : false;
-
   @override
   String toString() => toJson().toString();
 
   Map<String, dynamic> toJson() => {
-        'audio': audio ?? false,
-        'video': video ?? false,
+        'audio': audio,
+        'video': video,
       };
 
   MediaConstraints copyWith({
