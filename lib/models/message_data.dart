@@ -34,13 +34,13 @@ class CandidateMessageData with _$CandidateMessageData {
 
 @freezed
 class ErrorMessageData with _$ErrorMessageData {
+  const ErrorMessageData._();
+
   const factory ErrorMessageData({
     required int code,
     required String type,
     required String msg,
   }) = _ErrorMessageData;
-
-  const ErrorMessageData._();
 
   factory ErrorMessageData.fromJson(Map<String, Object?> json) =>
       _$ErrorMessageDataFromJson(json);

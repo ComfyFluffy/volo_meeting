@@ -4,12 +4,12 @@ part 'device.g.dart';
 
 @freezed
 class Device with _$Device {
-  const factory Device({
-    @JsonKey(name: 'id') required String id,
-    @JsonKey(name: 'nickname') required String nickname,
-  }) = _Device;
-
   const Device._();
+
+  const factory Device({
+    required String id,
+    required String nickname,
+  }) = _Device;
 
   String toJsonString() => jsonEncode(toJson());
   Device fromJsonString(String str) => Device.fromJson(jsonDecode(str));

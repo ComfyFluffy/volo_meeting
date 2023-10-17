@@ -5,10 +5,10 @@ part 'meeting.g.dart';
 @freezed
 class Meeting with _$Meeting {
   const factory Meeting({
-    @JsonKey(name: 'id') required String id,
+    required String id,
     @JsonKey(name: 'friendly_id') required String friendlyId,
-    @JsonKey(name: 'creator') required User creator,
-    @JsonKey(name: 'topic') required String topic,
+    required User creator,
+    required String topic,
     @EpochDateTimeConverter()
     @JsonKey(name: 'booked_start_time')
     required DateTime bookedStartTime,
