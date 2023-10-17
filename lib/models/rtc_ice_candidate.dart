@@ -12,11 +12,7 @@ class RTCIceCandidate with _$RTCIceCandidate {
     int? sdpMLineIndex,
   ) = _RTCIceCandidate;
 
-  Map<String, Object?> toMap() => {
-        'candidate': candidate,
-        'sdpMid': sdpMid,
-        'sdpMLineIndex': sdpMLineIndex,
-      };
+  Map<String, Object?> toMap() => toJson();
 
   factory RTCIceCandidate.fromJson(Map<String, Object?> json) =>
       _$RTCIceCandidateFromJson(json);

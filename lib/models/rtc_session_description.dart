@@ -9,7 +9,7 @@ class RTCSessionDescription with _$RTCSessionDescription {
   const factory RTCSessionDescription(String? sdp, String? type) =
       _RTCSessionDescription;
 
-  Map<String, Object?> toMap() => {'sdp': sdp, 'type': type};
+  Map<String, Object?> toMap() => toJson();
 
   factory RTCSessionDescription.fromJson(Map<String, Object?> json) =>
       _$RTCSessionDescriptionFromJson(json);
