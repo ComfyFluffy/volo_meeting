@@ -30,5 +30,5 @@
     "splitMap": true
   },
   "explorerExclude.backup": {},
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "automatic"
 }
