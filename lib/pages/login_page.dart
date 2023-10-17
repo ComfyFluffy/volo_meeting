@@ -11,7 +11,7 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   late final _controller = TextEditingController(
-    text: ref.watch(settingsProvider).username,
+    text: ref.watch(settingsProvider).nickname,
   );
 
   @override
@@ -50,7 +50,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 if (_controller.text.isNotBlank) {
                   ref
                       .read(settingsProvider.notifier)
-                      .setUsername(_controller.text);
+                      .setNickname(_controller.text);
                   context.pushAndRemoveRoot(const RootPage());
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

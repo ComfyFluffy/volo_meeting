@@ -15,7 +15,7 @@ class SplashPage extends ConsumerWidget {
 
     return BasedSplashPage(
       rootPage:
-          settings.username.isBlank ? const LoginPage() : const RootPage(),
+          settings.nickname.isBlank ? const LoginPage() : const RootPage(),
       appIcon: SvgPicture.asset(
         context.brightness == Brightness.dark
             ? 'assets/images/fill_icon.svg'

@@ -12,7 +12,7 @@ class ProfileNameTile extends ConsumerWidget {
     return BasedListTile(
       leadingIcon: Icons.draw_rounded,
       titleText: '用户名',
-      detailText: settings.username,
+      detailText: settings.nickname,
       onTap: () => showDialog(
         context: context,
         builder: (context) => const _UsernameDialog(),
@@ -30,7 +30,7 @@ class _UsernameDialog extends ConsumerStatefulWidget {
 
 class _UsernameDialogState extends ConsumerState<_UsernameDialog> {
   late final _controller = TextEditingController(
-    text: ref.watch(settingsProvider).username,
+    text: ref.watch(settingsProvider).nickname,
   );
 
   @override
@@ -42,7 +42,7 @@ class _UsernameDialogState extends ConsumerState<_UsernameDialog> {
         TextButton(
           onPressed: () {
             if (_controller.text.isNotBlank) {
-              ref.read(settingsProvider.notifier).setUsername(_controller.text);
+              ref.read(settingsProvider.notifier).setNickname(_controller.text);
               context.pop();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

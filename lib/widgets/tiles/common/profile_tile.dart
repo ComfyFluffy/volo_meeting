@@ -11,7 +11,7 @@ class ProfileTile extends ConsumerWidget {
 
     return BasedListTile(
       leading: const BasedAvatar(),
-      titleText: settings.username,
+      titleText: settings.nickname,
       detail: const Badge(label: Text('免费版')),
       onTap: () => context.push(const ProfilePage()),
     );

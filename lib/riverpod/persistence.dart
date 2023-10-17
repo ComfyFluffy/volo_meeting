@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'persistence.g.dart';
 
 const _version = 'vm_version';
-const _username = 'vm_username';
+const _nickname = 'vm_nickname';
 const _deviceId = 'vm_device_id';
 const _enableVideo = 'vm_enable_video';
 const _enableAudio = 'vm_enable_audio';
@@ -33,9 +33,9 @@ class Persistence {
     return Persistence._(pref);
   }
 
-  String getUsername() => _pref.getString(_username) ?? '';
-  Future<void> setUsername(String username) async =>
-      await _pref.setString(_username, username);
+  String getNickname() => _pref.getString(_nickname) ?? '';
+  Future<void> setNickname(String nickname) async =>
+      await _pref.setString(_nickname, nickname);
 
   String getDeviceId() {
     final id = _pref.getString(_deviceId) ?? nanoid();

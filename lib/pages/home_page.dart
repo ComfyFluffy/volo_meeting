@@ -12,7 +12,7 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const _HomeAvatar(),
-        title: Text(settings.username),
+        title: Text(settings.nickname),
         centerTitle: false,
       ),
       drawer: const HomePageDrawer(),

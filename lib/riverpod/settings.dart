@@ -10,16 +10,16 @@ class Settings extends _$Settings {
   SettingsState build() {
     _persistence = ref.watch(persistenceProvider);
     return SettingsState(
-      username: _persistence.getUsername(),
+      nickname: _persistence.getNickname(),
       deviceId: _persistence.getDeviceId(),
       enableAudio: _persistence.getEnableAudio(),
       enableVideo: _persistence.getEnableVideo(),
     );
   }
 
-  Future<void> setUsername(String username) async {
-    await _persistence.setUsername(username);
-    state = state.copyWith(username: username);
+  Future<void> setNickname(String nickname) async {
+    await _persistence.setNickname(nickname);
+    state = state.copyWith(nickname: nickname);
   }
 
   Future<void> randomDeviceId() async {

@@ -7,29 +7,35 @@ class VoloMeetingApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.deepPurple,
+      ),
+      useMaterial3: true,
+      appBarTheme: const AppBarTheme(
+        centerTitle: true,
+        scrolledUnderElevation: 0,
+      ),
+    );
+
+    final darkTheme = ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        brightness: Brightness.dark,
+        seedColor: Colors.deepPurple,
+      ),
+      useMaterial3: true,
+      appBarTheme: const AppBarTheme(
+        centerTitle: true,
+        scrolledUnderElevation: 0,
+      ),
+    );
+
     return MaterialApp(
       title: VoloMeeting.appName,
       scrollBehavior: const CupertinoScrollBehavior(),
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          scrolledUnderElevation: 0,
-        ),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.dark,
-          seedColor: Colors.deepPurple,
-        ),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          scrolledUnderElevation: 0,
-        ),
-      ),
+      theme: theme,
+      darkTheme: darkTheme,
       home: const SplashPage(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
