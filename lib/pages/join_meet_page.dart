@@ -22,6 +22,13 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
   );
 
   @override
+  void dispose() {
+    // TIPS: To fix the issue that camera and mic keep using after we exit this page
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.watch(settingsProvider.notifier);
