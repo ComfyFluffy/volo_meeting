@@ -2,7 +2,7 @@ import 'package:volo_meeting/index.dart';
 part 'message_data.freezed.dart';
 part 'message_data.g.dart';
 
-@Freezed(genericArgumentFactories: true)
+@freezed
 class DescriptionMessageData with _$DescriptionMessageData {
   const DescriptionMessageData._();
 
@@ -17,7 +17,7 @@ class DescriptionMessageData with _$DescriptionMessageData {
       _$DescriptionMessageDataFromJson(json);
 }
 
-@Freezed(genericArgumentFactories: true)
+@freezed
 class CandidateMessageData with _$CandidateMessageData {
   const CandidateMessageData._();
 
