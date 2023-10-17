@@ -1,1 +1,0 @@
-enum PlatformType { android, iOS }
