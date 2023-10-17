@@ -11,6 +11,18 @@ extension BuildContextExtension on BuildContext {
 
   void pop<T extends Object?>([T? result]) => Navigator.pop(this, result);
 
+  Future<T?> pushReplacement<T extends Object?, TO extends Object?>(
+    Widget page, {
+    TO? result,
+  }) =>
+      Navigator.pushReplacement(
+        this,
+        CupertinoPageRoute<T>(
+          builder: (_) => page,
+          settings: RouteSettings(arguments: result),
+        ),
+      );
+
   Future<T?> pushAndRemoveRoot<T extends Object?>(Widget page) =>
       Navigator.pushAndRemoveUntil(
         this,

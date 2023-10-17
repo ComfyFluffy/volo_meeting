@@ -1,7 +1,7 @@
 import 'package:volo_meeting/index.dart';
 
-class MeetPage extends StatelessWidget {
-  const MeetPage({
+class MeetingPage extends StatelessWidget {
+  const MeetingPage({
     super.key,
   });
 
