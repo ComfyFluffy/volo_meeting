@@ -6,8 +6,7 @@ part 'device.g.dart';
 class Device with _$Device {
   const factory Device({
     @JsonKey(name: 'id') required String id,
-    @JsonKey(name: 'user') required User user,
-    @JsonKey(name: 'platform') required PlatformType platform,
+    @JsonKey(name: 'nickname') required String nickname,
   }) = _Device;
 
   const Device._();
