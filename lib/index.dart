@@ -18,6 +18,7 @@ export 'package:flutter/services.dart';
 export 'package:based_avatar/based_avatar.dart';
 export 'package:based_list/based_list.dart';
 export 'package:dartx/dartx.dart';
+export 'package:dio/dio.dart';
 export 'package:flutter_displaymode/flutter_displaymode.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';
 export 'package:flutter_riverpod/flutter_riverpod.dart';
