@@ -52,25 +52,38 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
             flex: 3,
             child: BasedListView(
               children: [
-                BasedListSection(
+                Column(
                   children: [
-                    VideoEnableTile(
-                      value: settings.enableVideo,
-                      onChanged: (value) {
-                        notifier.setEnableVideo(value);
-                        setState(() {
-                          _controller.setMediaEnabled(video: value);
-                        });
-                      },
+                    BasedListSection(
+                      children: [
+                        VideoEnableTile(
+                          value: settings.enableVideo,
+                          onChanged: (value) {
+                            notifier.setEnableVideo(value);
+                            setState(() {
+                              _controller.setMediaEnabled(video: value);
+                            });
+                          },
+                        ),
+                        AudioEnableTile(
+                          value: settings.enableAudio,
+                          onChanged: (value) {
+                            notifier.setEnableAudio(value);
+                            setState(() {
+                              _controller.setMediaEnabled(audio: value);
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    AudioEnableTile(
-                      value: settings.enableAudio,
-                      onChanged: (value) {
-                        notifier.setEnableAudio(value);
-                        setState(() {
-                          _controller.setMediaEnabled(audio: value);
-                        });
-                      },
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: FilledButton(
+                        onPressed: () {
+                          context.pushReplacement(const MeetingPage());
+                        },
+                        child: const Text('加入会议'),
+                      ),
                     ),
                   ],
                 ),
