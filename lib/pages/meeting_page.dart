@@ -1,12 +1,47 @@
 import 'package:volo_meeting/index.dart';
+import 'package:volo_meeting/service/meeting_room.dart';
 
-class MeetingPage extends StatelessWidget {
+class MeetingPage extends ConsumerStatefulWidget {
   const MeetingPage({
     super.key,
+    required this.meetingId,
   });
+
+  final String meetingId;
+
+  @override
+  ConsumerState<MeetingPage> createState() => _MeetingPageState();
+}
+
+class _MeetingPageState extends ConsumerState<MeetingPage> {
+  late final MeetingRoom meetingRoom = MeetingRoom(
+    meetingId: widget.meetingId,
+    baseUrl: Uri.parse('ws://12.34.5.6/'),
+    device: Device(
+      id: ref.watch(settingsProvider).deviceId,
+      nickname: ref.watch(settingsProvider).nickname,
+    ),
+  );
+
+  final preview = RTCPreviewController();
+
+  @override
+  void initState() {
+    super.initState();
+    VoloMeeting.printLog('init MeetingPage');
+    VoloMeeting.printLog('init MeetingPage end');
+  }
+
+  @override
+  void dispose() {
+    // TODO: meetingRoom.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    VoloMeeting.printLog('build MeetingPage');
+
     return Scaffold(
       appBar: AppBar(
         leading: TextButton(
@@ -33,8 +68,55 @@ class MeetingPage extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: BasedAvatar(),
+      body: Center(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final row = constraints.maxWidth > 480 ? 2 : 1;
+            final double width =
+                constraints.maxWidth > 960 ? 480 : constraints.maxWidth / row;
+
+            return Wrap(
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    SizedBox(
+                      width: width,
+                      child: RTCVideoView(
+                        renderer: preview.renderer,
+                      ),
+                    ),
+                    Container(
+                      color: Colors.black.withAlpha(128),
+                      width: width,
+                      height: 40,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: width,
+                  child: RTCVideoView(
+                    renderer: preview.renderer,
+                  ),
+                ),
+                SizedBox(
+                  width: width,
+                  child: RTCVideoView(
+                    renderer: preview.renderer,
+                  ),
+                ),
+                SizedBox(
+                  width: width,
+                  child: RTCVideoView(
+                    renderer: preview.renderer,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         indicatorColor: Colors.transparent,

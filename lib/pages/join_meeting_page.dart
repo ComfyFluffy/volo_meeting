@@ -3,7 +3,10 @@ import 'package:volo_meeting/index.dart';
 class JoinMeetPage extends ConsumerStatefulWidget {
   const JoinMeetPage({
     super.key,
+    required this.meetingId,
   });
+
+  final String meetingId;
 
   @override
   ConsumerState<JoinMeetPage> createState() => _JoinMeetPageState();
@@ -44,7 +47,7 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
             child: Center(
               child: SizedBox(
                 width: MediaQuery.sizeOf(context).width / 2,
-                child: RTCVideoView(controller: _controller),
+                child: RTCVideoView(renderer: _controller.renderer),
               ),
             ),
           ),
@@ -80,7 +83,11 @@ class _JoinMeetPageState extends ConsumerState<JoinMeetPage> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: FilledButton(
                         onPressed: () {
-                          context.pushReplacement(const MeetingPage());
+                          context.pushReplacement(
+                            MeetingPage(
+                              meetingId: widget.meetingId,
+                            ),
+                          );
                         },
                         child: const Text('加入会议'),
                       ),

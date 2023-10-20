@@ -16,6 +16,8 @@ class MeetingRoom {
     required Uri baseUrl,
     required this.device,
   }) {
+    VoloMeeting.printLog('init MeetingRoom');
+
     final url = baseUrl.replace(
       queryParameters: {
         'meeting_id': meetingId,
@@ -26,11 +28,14 @@ class MeetingRoom {
 
     _channel = IOWebSocketChannel.connect(url);
 
+    VoloMeeting.printLog('init MeetingRoom Websocket');
     _initWebSocket();
   }
 
   // Initialize WebSocket and listen for incoming messages
   void _initWebSocket() {
+    VoloMeeting.printLog('init Websocket');
+
     _channel.stream.listen(
       (message) {
         if (message is! String) return;
@@ -45,6 +50,8 @@ class MeetingRoom {
         VoloMeeting.printLog('WebSocket closed');
       },
     );
+
+    VoloMeeting.printLog('end Websocket');
   }
 
   // Handle incoming WebSocket messages

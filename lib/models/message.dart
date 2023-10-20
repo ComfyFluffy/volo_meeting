@@ -29,7 +29,7 @@ class Message with _$Message {
   @FreezedUnionValue('join')
   const factory Message.memberJoined({
     required List<Device> data,
-  }) = MembersMessage;
+  }) = MemberJoinedMessage;
 
   // const factory Message.keepAlive() = KeepAliveMessage;
 

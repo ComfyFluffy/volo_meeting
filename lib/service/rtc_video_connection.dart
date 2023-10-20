@@ -1,11 +1,29 @@
+import 'dart:collection';
+
 import 'package:volo_meeting/index.dart';
 
-class RemoteDeviceState {
-  bool micOn;
-  bool cameraOn;
-  bool muted;
+class RemoteRTCView extends StatelessWidget {
+  const RemoteRTCView({
+    super.key,
+    required this.remoteDeviceConnection,
+  });
 
-  RemoteDeviceState({
+  final RemoteDeviceConnection remoteDeviceConnection;
+
+  @override
+  Widget build(BuildContext context) {
+    return RTCVideoView(
+      renderer: remoteDeviceConnection.remoteStream,
+    );
+  }
+}
+
+class RemoteDeviceState {
+  final bool micOn;
+  final bool cameraOn;
+  final bool muted;
+
+  const RemoteDeviceState({
     required this.micOn,
     required this.cameraOn,
     required this.muted,
@@ -29,7 +47,7 @@ void _setUpDebugLogForPc(RTCPeerConnection pc, Device device) {
   };
 }
 
-class RemoteDeviceConnection {
+class RemoteDeviceConnection extends ChangeNotifier {
   final Device device;
   RemoteDeviceState state;
 
@@ -41,7 +59,7 @@ class RemoteDeviceConnection {
 
   get remoteStream => _remoteStream;
 
-  RemoteDeviceConnection({
+  RemoteDeviceConnection._({
     required this.device,
     required this.peerConnection,
     required this.state,
@@ -64,10 +82,10 @@ class RemoteDeviceConnection {
 
     peerConnection.onIceCandidate = onIceCandidate;
 
-    return RemoteDeviceConnection(
+    return RemoteDeviceConnection._(
       device: device,
       peerConnection: peerConnection,
-      state: RemoteDeviceState(
+      state: const RemoteDeviceState(
         micOn: true,
         cameraOn: true,
         muted: false,

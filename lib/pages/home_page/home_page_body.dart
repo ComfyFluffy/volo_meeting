@@ -43,7 +43,11 @@ class _HomePageBodyState extends State<HomePageBody> {
           child: FilledButton(
             onPressed: () {
               if (_controller.text.isInt) {
-                context.push(const JoinMeetPage());
+                context.push(
+                  JoinMeetPage(
+                    meetingId: _controller.text,
+                  ),
+                );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('请检查会议号')),

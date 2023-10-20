@@ -2,13 +2,13 @@ import 'package:volo_meeting/index.dart';
 
 class RTCVideoView extends StatelessWidget {
   const RTCVideoView({
-    required this.controller,
+    required this.renderer,
     super.key,
     this.filterQuality = FilterQuality.low,
     this.placeholderBuilder,
   });
 
-  final RTCPreviewController controller;
+  final RTCVideoRenderer renderer;
   final FilterQuality filterQuality;
   final WidgetBuilder? placeholderBuilder;
 
@@ -18,10 +18,10 @@ class RTCVideoView extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: ValueListenableBuilder(
-          valueListenable: controller.renderer,
+          valueListenable: renderer,
           builder: (context, value, child) {
-            final hasVideo = controller.renderer.renderVideo &&
-                value.width * value.height != 0;
+            final hasVideo =
+                renderer.renderVideo && value.width * value.height != 0;
 
             return AspectRatio(
               aspectRatio: hasVideo
@@ -29,7 +29,7 @@ class RTCVideoView extends StatelessWidget {
                   : MediaQuery.of(context).size.aspectRatio,
               child: hasVideo
                   ? Texture(
-                      textureId: controller.renderer.textureId!,
+                      textureId: renderer.textureId!,
                       filterQuality: filterQuality,
                     )
                   : const ColoredBox(color: Colors.black),
@@ -65,12 +65,15 @@ class RTCPreviewController extends ChangeNotifier {
   String toString() => mediaConstraints.toJson().toString();
 
   RTCPreviewController({
-    MediaConstraints? mediaConstraints,
+    MediaConstraints mediaConstraints = const MediaConstraints(
+      audio: true,
+      video: {'facingMode': 'user'},
+    ),
     videoEnabled = true,
     audioEnabled = true,
   }) {
     /// set mediaConstraints
-    _constraints = mediaConstraints ?? const MediaConstraints();
+    _constraints = mediaConstraints;
     _videoEnabled = videoEnabled;
     _audioEnabled = audioEnabled;
 
