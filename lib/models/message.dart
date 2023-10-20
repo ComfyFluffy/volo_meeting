@@ -8,32 +8,33 @@ class Message with _$Message {
   const Message._();
 
   const factory Message.description({
-    required String id,
     required List<DescriptionMessageData> data,
   }) = DescriptionMessage;
 
   const factory Message.iceCandidate({
-    required String id,
     required List<IceCandidateMessageData> data,
   }) = IceCandidateMessage;
 
-  @FreezedUnionValue('device')
-  const factory Message.updateDevice({
-    required String id,
-    required Device data,
-  }) = UpdateDeviceMessage;
+  // @FreezedUnionValue('device')
+  // const factory Message.updateDevice({
+  //   required String id,
+  //   required Device data,
+  // }) = UpdateDeviceMessage;
 
   @FreezedUnionValue('member')
   const factory Message.members({
-    required String id,
     required List<Device> data,
   }) = MembersMessage;
 
-  const factory Message.keepAlive() = KeepAliveMessage;
+  @FreezedUnionValue('join')
+  const factory Message.memberJoined({
+    required List<Device> data,
+  }) = MembersMessage;
+
+  // const factory Message.keepAlive() = KeepAliveMessage;
 
   @FreezedUnionValue('leave')
   const factory Message.memberLeft({
-    required String id,
     required String data,
   }) = MemberLeftMessage;
 

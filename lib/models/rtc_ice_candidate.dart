@@ -22,4 +22,11 @@ class MyRTCIceCandidate with _$MyRTCIceCandidate {
         sdpMid,
         sdpMLineIndex,
       );
+
+  factory MyRTCIceCandidate.fromRTCIceCandidate(RTCIceCandidate candidate) =>
+      MyRTCIceCandidate(
+        candidate.candidate,
+        candidate.sdpMid,
+        candidate.sdpMLineIndex,
+      );
 }

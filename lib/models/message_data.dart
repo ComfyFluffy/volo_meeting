@@ -8,7 +8,7 @@ class DescriptionMessageData with _$DescriptionMessageData {
 
   const factory DescriptionMessageData({
     required String id,
-    required List<MyRTCSessionDescription> content,
+    required MyRTCSessionDescription content,
   }) = _DescriptionMessageData;
 
   factory DescriptionMessageData.fromJson(
@@ -23,13 +23,21 @@ class IceCandidateMessageData with _$IceCandidateMessageData {
 
   const factory IceCandidateMessageData({
     required String id,
-    required List<MyRTCIceCandidate> content,
+    required MyRTCIceCandidate content,
   }) = _IceCandidateMessageData;
 
   factory IceCandidateMessageData.fromJson(
     Map<String, dynamic> json,
   ) =>
       _$IceCandidateMessageDataFromJson(json);
+
+  RTCIceCandidate toRTCIceCandidate() {
+    return RTCIceCandidate(
+      content.candidate,
+      content.sdpMid,
+      content.sdpMLineIndex,
+    );
+  }
 }
 
 @freezed
