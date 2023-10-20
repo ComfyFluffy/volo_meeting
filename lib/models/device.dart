@@ -14,5 +14,8 @@ class Device with _$Device {
   String toJsonString() => jsonEncode(toJson());
   Device fromJsonString(String str) => Device.fromJson(jsonDecode(str));
 
+  @override
+  String toString() => '$nickname($id)';
+
   factory Device.fromJson(Map<String, Object?> json) => _$DeviceFromJson(json);
 }
