@@ -3,14 +3,21 @@ part 'rtc_session_description.freezed.dart';
 part 'rtc_session_description.g.dart';
 
 @freezed
-class RTCSessionDescription with _$RTCSessionDescription {
-  const RTCSessionDescription._();
+class MyRTCSessionDescription with _$MyRTCSessionDescription {
+  const MyRTCSessionDescription._();
 
-  const factory RTCSessionDescription(String? sdp, String? type) =
-      _RTCSessionDescription;
+  const factory MyRTCSessionDescription(
+    String? sdp,
+    String? type,
+  ) = _MyRTCSessionDescription;
 
   Map<String, Object?> toMap() => toJson();
 
-  factory RTCSessionDescription.fromJson(Map<String, Object?> json) =>
-      _$RTCSessionDescriptionFromJson(json);
+  factory MyRTCSessionDescription.fromJson(Map<String, Object?> json) =>
+      _$MyRTCSessionDescriptionFromJson(json);
+
+  RTCSessionDescription toRTCSessionDescription() => RTCSessionDescription(
+        sdp,
+        type,
+      );
 }

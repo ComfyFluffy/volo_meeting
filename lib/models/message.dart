@@ -14,31 +14,33 @@ class Message with _$Message {
 
   const factory Message.iceCandidate({
     required String id,
-    required List<CandidateMessageData> data,
-  }) = CandidateMessage;
+    required List<IceCandidateMessageData> data,
+  }) = IceCandidateMessage;
 
-  const factory Message.device({
+  @FreezedUnionValue('device')
+  const factory Message.updateDevice({
     required String id,
     required Device data,
-  }) = DeviceMessage;
+  }) = UpdateDeviceMessage;
 
-  const factory Message.member({
+  @FreezedUnionValue('member')
+  const factory Message.members({
     required String id,
-    required Device data,
-  }) = MemberMessage;
+    required List<Device> data,
+  }) = MembersMessage;
 
   const factory Message.keepAlive() = KeepAliveMessage;
-  const factory Message.leave() = LeaveMessage;
+
+  @FreezedUnionValue('leave')
+  const factory Message.memberLeft({
+    required String id,
+    required String data,
+  }) = MemberLeftMessage;
 
   const factory Message.error({
     required String id,
     required ErrorMessageData data,
   }) = ErrorMessage;
-
-  const factory Message.response({
-    required String id,
-    required dynamic data,
-  }) = ResponseMessage;
 
   String toJsonString() => jsonEncode(toJson());
   Message fromJsonString(String str) => Message.fromJson(jsonDecode(str));

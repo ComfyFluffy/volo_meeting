@@ -3,10 +3,10 @@ part 'rtc_ice_candidate.freezed.dart';
 part 'rtc_ice_candidate.g.dart';
 
 @freezed
-class RTCIceCandidate with _$RTCIceCandidate {
-  const RTCIceCandidate._();
+class MyRTCIceCandidate with _$MyRTCIceCandidate {
+  const MyRTCIceCandidate._();
 
-  const factory RTCIceCandidate(
+  const factory MyRTCIceCandidate(
     String? candidate,
     String? sdpMid,
     int? sdpMLineIndex,
@@ -14,6 +14,12 @@ class RTCIceCandidate with _$RTCIceCandidate {
 
   Map<String, Object?> toMap() => toJson();
 
-  factory RTCIceCandidate.fromJson(Map<String, Object?> json) =>
-      _$RTCIceCandidateFromJson(json);
+  factory MyRTCIceCandidate.fromJson(Map<String, Object?> json) =>
+      _$MyRTCIceCandidateFromJson(json);
+
+  RTCIceCandidate toRTCIceCandidate() => RTCIceCandidate(
+        candidate,
+        sdpMid,
+        sdpMLineIndex,
+      );
 }
