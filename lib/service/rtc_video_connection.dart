@@ -1,29 +1,11 @@
-import 'dart:collection';
-
 import 'package:volo_meeting/index.dart';
 
-class RemoteRTCView extends StatelessWidget {
-  const RemoteRTCView({
-    super.key,
-    required this.remoteDeviceConnection,
-  });
-
-  final RemoteDeviceConnection remoteDeviceConnection;
-
-  @override
-  Widget build(BuildContext context) {
-    return RTCVideoView(
-      renderer: remoteDeviceConnection.remoteStream,
-    );
-  }
-}
-
 class RemoteDeviceState {
-  final bool micOn;
-  final bool cameraOn;
-  final bool muted;
+  bool micOn;
+  bool cameraOn;
+  bool muted;
 
-  const RemoteDeviceState({
+  RemoteDeviceState({
     required this.micOn,
     required this.cameraOn,
     required this.muted,
@@ -47,27 +29,27 @@ void _setUpDebugLogForPc(RTCPeerConnection pc, Device device) {
   };
 }
 
-class RemoteDeviceConnection extends ChangeNotifier {
-  final Device device;
+class RemoteDeviceConnection {
+  final Device localDevice;
   RemoteDeviceState state;
 
   final RTCPeerConnection peerConnection;
-
-  MediaStream? _localStream;
 
   MediaStream? _remoteStream;
 
   get remoteStream => _remoteStream;
 
-  RemoteDeviceConnection._({
-    required this.device,
+  RemoteDeviceConnection({
+    required this.localDevice,
     required this.peerConnection,
     required this.state,
   });
 
   static Future<RemoteDeviceConnection> create({
-    required Device device,
+    required Device localDevice,
+    required Device remoteDevice,
     required void Function(RTCIceCandidate) onIceCandidate,
+    required void Function(RTCSessionDescription) onCreateOffer,
   }) async {
     final configuration = <String, dynamic>{
       'iceServers': [
@@ -78,23 +60,53 @@ class RemoteDeviceConnection extends ChangeNotifier {
     };
     final peerConnection = await createPeerConnection(configuration);
 
-    _setUpDebugLogForPc(peerConnection, device);
-
-    peerConnection.onIceCandidate = onIceCandidate;
-
-    return RemoteDeviceConnection._(
-      device: device,
+    final connection = RemoteDeviceConnection(
+      localDevice: remoteDevice,
       peerConnection: peerConnection,
-      state: const RemoteDeviceState(
+      state: RemoteDeviceState(
         micOn: true,
         cameraOn: true,
         muted: false,
       ),
     );
+
+    peerConnection.onIceCandidate = onIceCandidate;
+    peerConnection.onTrack = (event) {
+      if (event.track.kind == 'video') {
+        VoloMeeting.printLog('Received remote video track');
+        connection._remoteStream = event.streams[0];
+      }
+    };
+
+    _setUpDebugLogForPc(peerConnection, remoteDevice);
+
+    Future(() async {
+      if (localDevice.id < remoteDevice.id) return;
+
+      final offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      onCreateOffer(offer);
+    });
+
+    return connection;
+  }
+
+  Future<void> dispose() async {
+    await _remoteStream?.dispose();
+    await peerConnection.dispose();
+  }
+
+  Future<RTCSessionDescription> createAnswer(
+    RTCSessionDescription offer,
+  ) async {
+    await peerConnection.setRemoteDescription(offer);
+    final answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+    return answer;
   }
 
   void updateLocalStream(MediaStream stream) {
-    _localStream = stream;
+    peerConnection.addStream(stream);
   }
 
   void updateState(RemoteDeviceState state) {

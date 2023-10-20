@@ -5,19 +5,24 @@ import 'package:volo_meeting/service/rtc_video_connection.dart';
 
 class MeetingRoom {
   final String meetingId;
-  final Device device;
-  final HashMap<String, RemoteDeviceConnection> deviceConnections = HashMap();
+  final Device localDevice;
+  final LinkedHashMap<String, RemoteDeviceConnection> deviceConnections =
+      LinkedHashMap();
 
   late final IOWebSocketChannel _channel;
   late final MediaStream _localStream;
 
-  MeetingRoom({
+  MeetingRoom._({
     required this.meetingId,
     required Uri baseUrl,
-    required this.device,
-  }) {
-    VoloMeeting.printLog('init MeetingRoom');
+    required this.localDevice,
+  });
 
+  static Future<MeetingRoom> create({
+    required String meetingId,
+    required Uri baseUrl,
+    required Device device,
+  }) async {
     final url = baseUrl.replace(
       queryParameters: {
         'meeting_id': meetingId,
@@ -26,16 +31,29 @@ class MeetingRoom {
       },
     );
 
-    _channel = IOWebSocketChannel.connect(url);
+    final channel = IOWebSocketChannel.connect(url);
+    final meetingRoom = MeetingRoom._(
+      meetingId: meetingId,
+      baseUrl: baseUrl,
+      localDevice: device,
+    );
+    meetingRoom._channel = channel;
 
-    VoloMeeting.printLog('init MeetingRoom Websocket');
-    _initWebSocket();
+    meetingRoom._initWebSocket();
+
+    return meetingRoom;
   }
 
-  // Initialize WebSocket and listen for incoming messages
-  void _initWebSocket() {
-    VoloMeeting.printLog('init Websocket');
+  Future<void> dispose() async {
+    for (final deviceConnection in deviceConnections.values) {
+      deviceConnection.dispose();
+    }
+    deviceConnections.clear();
+    _localStream.dispose();
+    _channel.sink.close();
+  }
 
+  void _initWebSocket() {
     _channel.stream.listen(
       (message) {
         if (message is! String) return;
@@ -50,18 +68,21 @@ class MeetingRoom {
         VoloMeeting.printLog('WebSocket closed');
       },
     );
-
-    VoloMeeting.printLog('end Websocket');
   }
 
-  // Handle incoming WebSocket messages
   void _handleMessage(Message message) async {
     switch (message) {
       case DescriptionMessage(:final data):
         {
           for (final description in data) {
             final deviceConnection = deviceConnections[description.id];
-            deviceConnection?.peerConnection.setRemoteDescription(
+            if (deviceConnection == null) {
+              VoloMeeting.printLog(
+                'Received description for unknown device ${description.id}',
+              );
+              continue;
+            }
+            deviceConnection.peerConnection.setRemoteDescription(
               description.content.toRTCSessionDescription(),
             );
           }
@@ -70,7 +91,13 @@ class MeetingRoom {
         {
           for (final iceCandidate in data) {
             final deviceConnection = deviceConnections[iceCandidate.id];
-            deviceConnection?.peerConnection.addCandidate(
+            if (deviceConnection == null) {
+              VoloMeeting.printLog(
+                'Received ICE candidate for unknown device ${iceCandidate.id}',
+              );
+              continue;
+            }
+            deviceConnection.peerConnection.addCandidate(
               iceCandidate.content.toRTCIceCandidate(),
             );
           }
@@ -89,19 +116,31 @@ class MeetingRoom {
     }
   }
 
-  Future<void> _addDeviceIfNotPresent(Device device) async {
-    if (deviceConnections[device.id] != null) return;
+  Future<void> _addDeviceIfNotPresent(Device remoteDevice) async {
+    if (deviceConnections[remoteDevice.id] != null) return;
 
     final deviceConnection = await RemoteDeviceConnection.create(
-      device: device,
+      localDevice: localDevice,
+      remoteDevice: remoteDevice,
       onIceCandidate: (iceCandidate) => {
-        _sendIceCandidate(device, iceCandidate),
+        _sendIceCandidate(remoteDevice, iceCandidate),
+      },
+      onCreateOffer: (offer) => {
+        _sendDescription(remoteDevice, offer),
       },
     );
-    deviceConnections[device.id] = deviceConnection;
+
+    // If the device was added while we were waiting for the connection to be
+    // established, dispose of the new connection and return.
+    if (deviceConnections[remoteDevice.id] != null) {
+      deviceConnection.dispose();
+      return;
+    }
+
+    deviceConnections[remoteDevice.id] = deviceConnection;
   }
 
-  Future<void> _sendIceCandidate(
+  void _sendIceCandidate(
     Device to,
     RTCIceCandidate iceCandidate,
   ) async {
@@ -110,6 +149,23 @@ class MeetingRoom {
         IceCandidateMessageData(
           id: to.id,
           content: MyRTCIceCandidate.fromRTCIceCandidate(iceCandidate),
+        ),
+      ],
+    );
+    sendMessage(message);
+  }
+
+  void _sendDescription(
+    Device to,
+    RTCSessionDescription description,
+  ) async {
+    final message = Message.description(
+      data: [
+        DescriptionMessageData(
+          id: to.id,
+          content: MyRTCSessionDescription.fromRTCSessionDescription(
+            description,
+          ),
         ),
       ],
     );

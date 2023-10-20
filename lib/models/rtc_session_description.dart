@@ -20,4 +20,12 @@ class MyRTCSessionDescription with _$MyRTCSessionDescription {
         sdp,
         type,
       );
+
+  factory MyRTCSessionDescription.fromRTCSessionDescription(
+    RTCSessionDescription description,
+  ) =>
+      MyRTCSessionDescription(
+        description.sdp,
+        description.type,
+      );
 }
