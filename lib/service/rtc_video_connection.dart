@@ -81,6 +81,7 @@ class RemoteDeviceConnection {
     _setUpDebugLogForPc(peerConnection, remoteDevice);
 
     Future(() async {
+      // Decide who should create the offer.
       if (localDevice.id < remoteDevice.id) return;
 
       final offer = await peerConnection.createOffer();

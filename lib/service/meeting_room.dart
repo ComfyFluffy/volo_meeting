@@ -18,11 +18,11 @@ class MeetingRoom {
     required this.localDevice,
   });
 
-  static Future<MeetingRoom> create({
+  static MeetingRoom create({
     required String meetingId,
     required Uri baseUrl,
     required Device device,
-  }) async {
+  }) {
     final url = baseUrl.replace(
       queryParameters: {
         'meeting_id': meetingId,

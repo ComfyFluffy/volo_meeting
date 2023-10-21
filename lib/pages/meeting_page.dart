@@ -14,7 +14,7 @@ class MeetingPage extends ConsumerStatefulWidget {
 }
 
 class _MeetingPageState extends ConsumerState<MeetingPage> {
-  late final MeetingRoom meetingRoom = MeetingRoom(
+  late final MeetingRoom meetingRoom = MeetingRoom.create(
     meetingId: widget.meetingId,
     baseUrl: Uri.parse('ws://12.34.5.6/'),
     device: Device(
@@ -28,13 +28,14 @@ class _MeetingPageState extends ConsumerState<MeetingPage> {
   @override
   void initState() {
     super.initState();
+
     VoloMeeting.printLog('init MeetingPage');
     VoloMeeting.printLog('init MeetingPage end');
   }
 
   @override
   void dispose() {
-    // TODO: meetingRoom.dispose();
+    meetingRoom.dispose();
     super.dispose();
   }
 
